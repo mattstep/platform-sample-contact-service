@@ -1,16 +1,18 @@
 package org.mattstep.platform.samples.contact;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.proofpoint.configuration.ConfigurationFactory;
 import com.proofpoint.configuration.ConfigurationModule;
-import com.proofpoint.jmx.JmxHttpModule;
 import com.proofpoint.http.client.ApacheHttpClient;
 import com.proofpoint.http.client.HttpClient;
+import com.proofpoint.http.client.StatusResponseHandler.StatusResponse;
+import com.proofpoint.http.client.StringResponseHandler.StringResponse;
 import com.proofpoint.http.server.testing.TestingHttpServer;
 import com.proofpoint.http.server.testing.TestingHttpServerModule;
 import com.proofpoint.jaxrs.JaxrsModule;
+import com.proofpoint.jmx.JmxHttpModule;
 import com.proofpoint.jmx.JmxModule;
 import com.proofpoint.json.JsonModule;
 import com.proofpoint.node.testing.TestingNodeModule;
@@ -25,13 +27,20 @@ import java.util.List;
 
 import static com.proofpoint.http.client.JsonResponseHandler.createJsonResponseHandler;
 import static com.proofpoint.http.client.Request.Builder.prepareGet;
+import static com.proofpoint.http.client.Request.Builder.preparePut;
+import static com.proofpoint.http.client.StatusResponseHandler.createStatusResponseHandler;
+import static com.proofpoint.http.client.StringResponseHandler.createStringResponseHandler;
 import static com.proofpoint.json.JsonCodec.listJsonCodec;
+import static com.proofpoint.testing.Assertions.assertEqualsIgnoreOrder;
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
+import static org.testng.Assert.assertEquals;
 
 public class TestServer
 {
     private HttpClient client;
     private TestingHttpServer server;
+    private ContactStore contactStore;
 
     @BeforeMethod
     public void setup()
@@ -50,6 +59,8 @@ public class TestServer
 
         server = injector.getInstance(TestingHttpServer.class);
 
+        contactStore = injector.getInstance(ContactStore.class);
+
         server.start();
         client = new ApacheHttpClient();
     }
@@ -67,11 +78,40 @@ public class TestServer
     public void testGetAllContacts()
             throws Exception
     {
-        List<String> contacts = client.execute(
+        ImmutableSet<String> contacts = ImmutableSet.of("martint", "electrum", "mattstep", "dphillips");
+        String ownerId = "foo";
+
+        for(String contactId : contacts) {
+            contactStore.addContact(ownerId, contactId);
+        }
+
+        List<String> actualContacts = client.execute(
+                prepareGet().setUri(uriFor("/v1/contact/" + ownerId)).build(),
+                createJsonResponseHandler(listJsonCodec(String.class), OK.getStatusCode()));
+
+        Assertions.assertEqualsIgnoreOrder(contacts, actualContacts);
+    }
+
+    @Test
+    public void testGetAllContactsEmptyResults()
+            throws Exception
+    {
+        List<String> actualContacts = client.execute(
                 prepareGet().setUri(uriFor("/v1/contact/foo")).build(),
                 createJsonResponseHandler(listJsonCodec(String.class), OK.getStatusCode()));
 
-        Assertions.assertEqualsIgnoreOrder(ImmutableList.of("martint","electrum","mattstep","dphillips"), contacts);
+        Assertions.assertEqualsIgnoreOrder(ImmutableSet.of(), actualContacts);
+    }
+
+    @Test
+    public void testPutContacts()
+    {
+        StatusResponse putResponse = client.execute(
+                preparePut().setUri(uriFor("/v1/contact/foo/bar")).build(),
+                createStatusResponseHandler());
+
+        assertEqualsIgnoreOrder(contactStore.getAllContactsForOwner("foo"), ImmutableSet.of("bar"));
+        assertEquals(putResponse.getStatusCode(), NO_CONTENT.getStatusCode());
     }
 
     private URI uriFor(String path)

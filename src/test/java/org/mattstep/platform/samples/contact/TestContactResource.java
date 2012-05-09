@@ -3,11 +3,14 @@ package org.mattstep.platform.samples.contact;
 import com.google.common.collect.ImmutableSet;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.core.Response;
 import java.util.Set;
 
 import static com.proofpoint.testing.Assertions.assertEqualsIgnoreOrder;
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 public class TestContactResource
 {
@@ -15,9 +18,31 @@ public class TestContactResource
     @Test
     public void testGetAllContacts()
     {
-        ContactResource resource = new ContactResource(new ContactStore());
+        ImmutableSet<String> contacts = ImmutableSet.of("martint", "electrum", "mattstep", "dphillips");
+        String ownerId = "foo";
 
-        assertEqualsIgnoreOrder((Set<String>) resource.getAllContacts("foo").getEntity(), ImmutableSet.of("martint", "electrum", "mattstep", "dphillips"));
-        assertEquals(resource.getAllContacts("foo").getStatus(), OK.getStatusCode());
+        ContactStore contactStore = new ContactStore();
+
+        for(String contactId : contacts) {
+            contactStore.addContact(ownerId, contactId);
+        }
+
+        ContactResource resource = new ContactResource(contactStore);
+
+        assertEqualsIgnoreOrder((Set<String>) resource.getAllContacts(ownerId).getEntity(), contacts);
+        assertEquals(resource.getAllContacts(ownerId).getStatus(), OK.getStatusCode());
+    }
+
+    @Test
+    public void testPutContacts()
+    {
+        ContactStore contactStore = new ContactStore();
+        ContactResource resource = new ContactResource(contactStore);
+
+        Response response = resource.putContact("foo", "bar");
+
+        assertEqualsIgnoreOrder(contactStore.getAllContactsForOwner("foo"), ImmutableSet.of("bar"));
+        assertEquals(response.getStatus(), NO_CONTENT.getStatusCode());
+        assertNull(response.getEntity());
     }
 }

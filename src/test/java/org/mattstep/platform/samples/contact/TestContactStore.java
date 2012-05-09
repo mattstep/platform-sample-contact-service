@@ -9,8 +9,15 @@ public class TestContactStore
     @Test
     public void testGetAllContactsByOwner()
     {
-        ContactStore store = new ContactStore();
+        ImmutableSet<String> contacts = ImmutableSet.of("martint", "electrum", "mattstep", "dphillips");
+        String ownerId = "foo";
 
-        Assertions.assertEqualsIgnoreOrder(store.getAllContactsForOwner("foo"), ImmutableSet.of("martint", "electrum", "mattstep", "dphillips"));
+        ContactStore contactStore = new ContactStore();
+
+        for(String contactId : contacts) {
+            contactStore.addContact(ownerId, contactId);
+        }
+
+        Assertions.assertEqualsIgnoreOrder(contactStore.getAllContactsForOwner(ownerId), contacts);
     }
 }
