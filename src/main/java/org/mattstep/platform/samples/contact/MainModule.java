@@ -14,6 +14,7 @@ public class MainModule
         binder.disableCircularProxies();
 
         binder.bind(ContactResource.class).in(Scopes.SINGLETON);
+        binder.bind(ContactStore.class).in(Scopes.SINGLETON);
 
         DiscoveryBinder.discoveryBinder(binder).bindHttpAnnouncement("contact");
     }
