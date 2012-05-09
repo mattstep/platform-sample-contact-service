@@ -1,11 +1,8 @@
 package org.mattstep.platform.samples.contact;
 
 import com.google.common.collect.ImmutableList;
-import com.proofpoint.testing.Assertions;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
 
 import static com.proofpoint.testing.Assertions.assertEqualsIgnoreOrder;
