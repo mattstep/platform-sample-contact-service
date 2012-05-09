@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.mattstep.platform.samples</groupId>
+    <artifactId>contact-service</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>contact-service</name>
+
+    <parent>
+        <groupId>com.proofpoint.platform</groupId>
+        <artifactId>rest-server-base</artifactId>
+        <version>0.63</version>
+        
+    </parent>
+
+    <properties>
+        <main-class>org.mattstep.platform.samples.contact.Main</main-class>
+    </properties>
+
+    
+
+    <dependencies>
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>node</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>configuration</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>bootstrap</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>discovery-experimental</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>jmx-http-rpc-experimental</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>log</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>http-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>jaxrs</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>jmx</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>trace-token</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.weakref</groupId>
+            <artifactId>jmxutils</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>jmx-http-experimental</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>http-client-experimental</artifactId>
+        </dependency>
+
+        <!-- for packaging -->
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>launcher</artifactId>
+            <classifier>bin</classifier>
+            <type>tar.gz</type>
+        </dependency>
+
+
+        <!-- for testing -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.proofpoint.platform</groupId>
+            <artifactId>testing</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
