@@ -2,6 +2,7 @@ package org.mattstep.platform.samples.contact;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Scopes;
 import com.proofpoint.discovery.client.DiscoveryBinder;
 
 public class MainModule
@@ -11,6 +12,8 @@ public class MainModule
     {
         binder.requireExplicitBindings();
         binder.disableCircularProxies();
+
+        binder.bind(ContactResource.class).in(Scopes.SINGLETON);
 
         DiscoveryBinder.discoveryBinder(binder).bindHttpAnnouncement("skeleton");
     }
