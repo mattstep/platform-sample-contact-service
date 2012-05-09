@@ -15,6 +15,6 @@ public class MainModule
 
         binder.bind(ContactResource.class).in(Scopes.SINGLETON);
 
-        DiscoveryBinder.discoveryBinder(binder).bindHttpAnnouncement("skeleton");
+        DiscoveryBinder.discoveryBinder(binder).bindHttpAnnouncement("contact");
     }
 }
