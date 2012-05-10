@@ -73,4 +73,29 @@ public class TestContactResource
         assertEquals(response.getStatus(), NOT_FOUND.getStatusCode());
         assertNull(response.getEntity());
     }
+
+    @Test
+    public void testGetContact()
+    {
+        ContactStore contactStore = new ContactStore();
+        ContactResource resource = new ContactResource(contactStore);
+
+        contactStore.addContact("foo", "bar");
+        Response response = resource.getContact("foo", "bar");
+
+        assertEquals(response.getStatus(), NO_CONTENT.getStatusCode());
+        assertNull(response.getEntity());
+    }
+
+    @Test
+    public void testGetContactMissing()
+    {
+        ContactStore contactStore = new ContactStore();
+        ContactResource resource = new ContactResource(contactStore);
+
+        Response response = resource.getContact("foo", "bar");
+
+        assertEquals(response.getStatus(), NOT_FOUND.getStatusCode());
+        assertNull(response.getEntity());
+    }
 }

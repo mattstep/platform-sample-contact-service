@@ -37,6 +37,20 @@ public class ContactResource
         return Response.ok(contactStore.getAllContactsForOwner(ownerId)).build();
     }
 
+
+    @Path("/{contactId: \\w+}")
+    @GET
+    public Response getContact(@PathParam("ownerId") String ownerId, @PathParam("contactId") String contactId)
+    {
+        Preconditions.checkNotNull(ownerId);
+        Preconditions.checkNotNull(contactId);
+
+        if(contactStore.getAllContactsForOwner(ownerId).contains(contactId)) {
+            return Response.noContent().build();
+        }
+        return Response.status(Status.NOT_FOUND).build();
+    }
+
     @Path("/{contactId: \\w+}")
     @PUT
     public Response putContact(@PathParam("ownerId") String ownerId, @PathParam("contactId") String contactId)

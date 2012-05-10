@@ -136,6 +136,23 @@ public class TestServer
         assertEquals(deleteResponse.getStatusCode(), NOT_FOUND.getStatusCode());
     }
 
+
+    @Test
+    public void testGetContact()
+    {
+        StatusResponse getResponse = client.execute(
+                prepareGet().setUri(uriFor("/v1/contact/foo/bar")).build(),
+                createStatusResponseHandler());
+        assertEquals(getResponse.getStatusCode(), NOT_FOUND.getStatusCode());
+
+        contactStore.addContact("foo", "bar");
+
+        getResponse = client.execute(
+                prepareGet().setUri(uriFor("/v1/contact/foo/bar")).build(),
+                createStatusResponseHandler());
+        assertEquals(getResponse.getStatusCode(), NO_CONTENT.getStatusCode());
+    }
+
     private URI uriFor(String path)
     {
         return server.getBaseUrl().resolve(path);
