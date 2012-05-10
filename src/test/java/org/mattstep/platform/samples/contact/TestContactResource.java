@@ -7,6 +7,7 @@ import javax.ws.rs.core.Response;
 import java.util.Set;
 
 import static com.proofpoint.testing.Assertions.assertEqualsIgnoreOrder;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
@@ -34,7 +35,7 @@ public class TestContactResource
     }
 
     @Test
-    public void testPutContacts()
+    public void testPutContact()
     {
         ContactStore contactStore = new ContactStore();
         ContactResource resource = new ContactResource(contactStore);
@@ -43,6 +44,33 @@ public class TestContactResource
 
         assertEqualsIgnoreOrder(contactStore.getAllContactsForOwner("foo"), ImmutableSet.of("bar"));
         assertEquals(response.getStatus(), NO_CONTENT.getStatusCode());
+        assertNull(response.getEntity());
+    }
+
+    @Test
+    public void testDeleteContact()
+    {
+        ContactStore contactStore = new ContactStore();
+        ContactResource resource = new ContactResource(contactStore);
+
+        contactStore.addContact("foo", "bar");
+        Response response = resource.deleteContact("foo", "bar");
+
+        assertEqualsIgnoreOrder(contactStore.getAllContactsForOwner("foo"), ImmutableSet.of());
+        assertEquals(response.getStatus(), NO_CONTENT.getStatusCode());
+        assertNull(response.getEntity());
+    }
+
+    @Test
+    public void testDeleteContactMissing()
+    {
+        ContactStore contactStore = new ContactStore();
+        ContactResource resource = new ContactResource(contactStore);
+
+        Response response = resource.deleteContact("foo", "bar");
+
+        assertEqualsIgnoreOrder(contactStore.getAllContactsForOwner("foo"), ImmutableSet.of());
+        assertEquals(response.getStatus(), NOT_FOUND.getStatusCode());
         assertNull(response.getEntity());
     }
 }

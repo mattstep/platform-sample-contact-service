@@ -1,9 +1,10 @@
 package org.mattstep.platform.samples.contact;
 
 import com.google.common.base.Preconditions;
+import org.mattstep.platform.samples.contact.ContactStore.RemovalStatus;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -11,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 @Path("/v1/contact/{ownerId: \\w+}")
 public class ContactResource
@@ -45,5 +47,18 @@ public class ContactResource
         contactStore.addContact(ownerId, contactId);
 
         return Response.noContent().build();
+    }
+
+    @Path("/{contactId: \\w+}")
+    @DELETE
+    public Response deleteContact(@PathParam("ownerId") String ownerId, @PathParam("contactId") String contactId)
+    {
+        Preconditions.checkNotNull(ownerId);
+        Preconditions.checkNotNull(contactId);
+
+        if(contactStore.removeContact(ownerId, contactId) == RemovalStatus.REMOVED) {
+            return Response.noContent().build();
+        }
+        return Response.status(Status.NOT_FOUND).build();
     }
 }

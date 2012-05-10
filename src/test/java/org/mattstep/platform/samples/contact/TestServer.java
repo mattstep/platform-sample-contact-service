@@ -26,12 +26,14 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.proofpoint.http.client.JsonResponseHandler.createJsonResponseHandler;
+import static com.proofpoint.http.client.Request.Builder.prepareDelete;
 import static com.proofpoint.http.client.Request.Builder.prepareGet;
 import static com.proofpoint.http.client.Request.Builder.preparePut;
 import static com.proofpoint.http.client.StatusResponseHandler.createStatusResponseHandler;
 import static com.proofpoint.http.client.StringResponseHandler.createStringResponseHandler;
 import static com.proofpoint.json.JsonCodec.listJsonCodec;
 import static com.proofpoint.testing.Assertions.assertEqualsIgnoreOrder;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.testng.Assert.assertEquals;
@@ -104,7 +106,7 @@ public class TestServer
     }
 
     @Test
-    public void testPutContacts()
+    public void testPutContact()
     {
         StatusResponse putResponse = client.execute(
                 preparePut().setUri(uriFor("/v1/contact/foo/bar")).build(),
@@ -112,6 +114,26 @@ public class TestServer
 
         assertEqualsIgnoreOrder(contactStore.getAllContactsForOwner("foo"), ImmutableSet.of("bar"));
         assertEquals(putResponse.getStatusCode(), NO_CONTENT.getStatusCode());
+    }
+
+    @Test
+    public void testDeleteContact()
+    {
+        contactStore.addContact("foo", "bar");
+
+        StatusResponse deleteResponse = client.execute(
+                prepareDelete().setUri(uriFor("/v1/contact/foo/bar")).build(),
+                createStatusResponseHandler());
+
+        assertEqualsIgnoreOrder(contactStore.getAllContactsForOwner("foo"), ImmutableSet.of());
+        assertEquals(deleteResponse.getStatusCode(), NO_CONTENT.getStatusCode());
+
+        deleteResponse = client.execute(
+                prepareDelete().setUri(uriFor("/v1/contact/foo/bar")).build(),
+                createStatusResponseHandler());
+
+        assertEqualsIgnoreOrder(contactStore.getAllContactsForOwner("foo"), ImmutableSet.of());
+        assertEquals(deleteResponse.getStatusCode(), NOT_FOUND.getStatusCode());
     }
 
     private URI uriFor(String path)

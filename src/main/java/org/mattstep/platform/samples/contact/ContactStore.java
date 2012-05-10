@@ -42,4 +42,17 @@ public class ContactStore
 
         contactCache.getUnchecked(ownerId).add(contactId);
     }
+
+    public RemovalStatus removeContact(String ownerId, String contactId)
+    {
+        Preconditions.checkNotNull(ownerId);
+        Preconditions.checkNotNull(contactId);
+
+        return contactCache.getUnchecked(ownerId).remove(contactId) ? RemovalStatus.REMOVED : RemovalStatus.NOT_PRESENT;
+    }
+
+    public enum RemovalStatus
+    {
+        REMOVED, NOT_PRESENT
+    }
 }
